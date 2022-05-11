@@ -91,7 +91,7 @@ if uploaded_file is not None:
     )
     
     if canvas_result.image_data is not None:
-        im = np.array(Image.fromarray(canvas_result.image_data).resize(img_input.size))
+        im = np.array(Image.fromarray(canvas_result.image_data.astype(np.uint8)).resize(img_input.size))
         background = np.where(
             (im[:, :, 0] == 0) & 
             (im[:, :, 1] == 0) & 
@@ -112,12 +112,6 @@ if uploaded_file is not None:
             with st.spinner("AI is doing the magic!"):
                 output = process_inpaint(np.array(img_input), np.array(im)) #TODO Put button here
                 img_output = Image.fromarray(output).convert("RGB")
-            
-            # NOTE: Calm! I'm not logging the input and outputs.
-            # It is impossible to access the filesystem in spaces environment.
-            now = datetime.now().strftime("%Y%m%d-%H%M%S-%f")
-            img_input.convert("RGB").save(f"./output/{now}-input.jpg")
-            img_output.convert("RGB").save(f"./output/{now}-output.jpg")
             
             st.write("AI has finished the job!")
             st.image(img_output)
